@@ -2,6 +2,7 @@ package org.example.lawnmowercontrollerservice.adapters.advice;
 
 import lombok.extern.log4j.Log4j2;
 import org.example.lawnmowercontrollerservice.ports.errors.LawnMowerControllerServiceError;
+import org.example.lawnmowercontrollerservice.ports.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,6 +12,21 @@ import reactor.core.publisher.Mono;
 @RestControllerAdvice
 @Log4j2
 public class LawnMowerControllerServiceAdvice {
+
+    @ExceptionHandler(UpperRightAxisNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    Mono<ErrorResponseDTO> notFoundErrorException(LawnMowerControllerServiceException e) {
+        log.error("A not found error has occurred: ", e);
+        return Mono.just(new ErrorResponseDTO(e.getErrorCode(), e.getErrorMessage()));
+    }
+
+    @ExceptionHandler({InputLinesHasIncorrectLengthException.class, WrongCoordinatesValueException.class, WrongDirectionCharacterException.class,
+                       WrongInstructionValueException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    Mono<ErrorResponseDTO> badRequestErrorException(LawnMowerControllerServiceException e) {
+        log.error("A bad request error has occurred: ", e);
+        return Mono.just(new ErrorResponseDTO(e.getErrorCode(), e.getErrorMessage()));
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

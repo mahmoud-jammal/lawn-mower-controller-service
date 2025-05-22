@@ -1,5 +1,7 @@
 package org.example.lawnmowercontrollerservice.adapters.validators;
 
+import org.example.lawnmowercontrollerservice.ports.exceptions.InputLinesHasIncorrectLengthException;
+import org.example.lawnmowercontrollerservice.ports.exceptions.WrongInstructionValueException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,12 +14,12 @@ public class UpdateCoordinatesRequestValidator {
     public void validateInstructionsSyntax(String instructionsValue) {
         Optional.of(instructionsValue)
                 .filter(instructions -> instructions.matches(INSTRUCTIONS_REGEX))
-                .orElseThrow();
+                .orElseThrow(WrongInstructionValueException::new);
     }
 
     public void validateInputLinesLength(List<String> inputLines) {
         if ((inputLines.size() - 1) % 2 != 0) {
-            throw new RuntimeException();
+            throw new InputLinesHasIncorrectLengthException();
         }
     }
 }

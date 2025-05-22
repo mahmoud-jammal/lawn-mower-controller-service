@@ -5,6 +5,7 @@ import lombok.Data;
 import org.example.lawnmowercontrollerservice.core.dtos.AxisDTO;
 import org.example.lawnmowercontrollerservice.core.dtos.CoordinatesDTO;
 import org.example.lawnmowercontrollerservice.core.enums.Direction;
+import org.example.lawnmowercontrollerservice.ports.exceptions.WrongInstructionValueException;
 
 @Data
 @Builder
@@ -21,7 +22,7 @@ public class MowerModel {
                 case 'L' -> this.coordinatesDTO.setDirection(this.coordinatesDTO.getDirection().left());
                 case 'R' -> this.coordinatesDTO.setDirection(this.coordinatesDTO.getDirection().right());
                 case 'F' -> moveForward(upperRightAxis);
-                default -> throw new RuntimeException();
+                default -> throw new WrongInstructionValueException();
             }
         }
         return getCoordinatesAsString();

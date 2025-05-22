@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.lawnmowercontrollerservice.adapters.validators.UpdateCoordinatesRequestValidator;
 import org.example.lawnmowercontrollerservice.adapters.vo.requests.UpdateCoordinatesRequestVO;
 import org.example.lawnmowercontrollerservice.adapters.vo.responses.UpdateCoordinatesResponseVO;
+import org.example.lawnmowercontrollerservice.ports.exceptions.UpperRightAxisNotFoundException;
+import org.example.lawnmowercontrollerservice.ports.exceptions.WrongCoordinatesValueException;
 import org.example.lawnmowercontrollerservice.ports.vo.inputs.UpdateMowerInputVO;
 import org.example.lawnmowercontrollerservice.ports.vo.outputs.UpdateMowerOutputVO;
 import org.springframework.stereotype.Component;
@@ -63,13 +65,13 @@ public class UpdateMowerVOMapper {
         Optional<String> upperRight = inputLines.stream().findFirst();
         return upperRight.filter(upperRightValue -> upperRightValue.matches(AXIS_REGEX))
                          .map(UpdateMowerVOMapper::getAxisInputVO)
-                         .orElseThrow();
+                         .orElseThrow(UpperRightAxisNotFoundException::new);
     }
 
     private UpdateMowerInputVO.MowerInputVo.CoordinatesInputVO getCoordinatesInputVO(String coordinatesLine) {
         return Optional.of(coordinatesLine)
                        .filter(coord -> coord.matches(COORDINATES_REGEX))
                        .map(coord -> new UpdateMowerInputVO.MowerInputVo.CoordinatesInputVO(getAxisInputVO(coord), coord.split(" ")[2]))
-                       .orElseThrow();
+                       .orElseThrow(WrongCoordinatesValueException::new);
     }
 }
