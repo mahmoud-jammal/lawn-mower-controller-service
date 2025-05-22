@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.lawnmowercontrollerservice.core.dtos.AxisDTO;
 import org.example.lawnmowercontrollerservice.core.mappers.MowerModelMapper;
 import org.example.lawnmowercontrollerservice.core.models.MowerModel;
+import org.example.lawnmowercontrollerservice.ports.exceptions.InputLinesHasIncorrectLengthException;
+import org.example.lawnmowercontrollerservice.ports.exceptions.UpperRightAxisNotFoundException;
 import org.example.lawnmowercontrollerservice.ports.inbound.LawnMowerCoordinatesUseCase;
 import org.example.lawnmowercontrollerservice.ports.vo.requests.UpdateCoordinatesRequestVO;
 import org.example.lawnmowercontrollerservice.ports.vo.responses.UpdateCoordinatesResponseVO;
@@ -39,7 +41,7 @@ public class LawnMowerCoordinatesUseCaseImp implements LawnMowerCoordinatesUseCa
         Optional<String> upperRight = inputLines.stream().findFirst();
         return upperRight.filter(upperRightValue -> upperRightValue.matches(AXIS_REGEX))
                          .map(LawnMowerCoordinatesUseCaseImp::getAxisDTO)
-                         .orElseThrow();
+                         .orElseThrow(UpperRightAxisNotFoundException::new);
     }
 
     private List<String> getUpdatedMowersCoordinates(List<MowerModel> mowerModels, AxisDTO upperRightAxis) {
@@ -48,7 +50,7 @@ public class LawnMowerCoordinatesUseCaseImp implements LawnMowerCoordinatesUseCa
 
     private void validateInputLines(List<String> inputLines) {
         if ((inputLines.size() - 1) % 2 != 0) {
-            throw new IllegalArgumentException("Invalid input: each mower must have a position and instruction line.");
+            throw new InputLinesHasIncorrectLengthException();
         }
     }
 

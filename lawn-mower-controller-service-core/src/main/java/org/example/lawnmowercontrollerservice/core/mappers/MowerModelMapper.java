@@ -5,6 +5,8 @@ import org.example.lawnmowercontrollerservice.core.dtos.AxisDTO;
 import org.example.lawnmowercontrollerservice.core.dtos.CoordinatesDTO;
 import org.example.lawnmowercontrollerservice.core.enums.Direction;
 import org.example.lawnmowercontrollerservice.core.models.MowerModel;
+import org.example.lawnmowercontrollerservice.ports.exceptions.WrongCoordinatesValueException;
+import org.example.lawnmowercontrollerservice.ports.exceptions.WrongInstructionValueException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class MowerModelMapper {
     private void validateInstructionsSyntax(String instructionsValue) {
         Optional.of(instructionsValue)
                 .filter(instructions -> instructions.matches(INSTRUCTIONS_REGEX))
-                .orElseThrow();
+                .orElseThrow(WrongInstructionValueException::new);
     }
 
     private CoordinatesDTO getCoordinatesDTO(String coordinatesValue) {
@@ -47,7 +49,7 @@ public class MowerModelMapper {
                                                    .axisDTO(getAxisDTO(coord))
                                                    .direction(Direction.fromString(coord.split(" ")[2]))
                                                    .build())
-                       .orElseThrow();
+                       .orElseThrow(WrongCoordinatesValueException::new);
     }
 
     private static AxisDTO getAxisDTO(String s) {

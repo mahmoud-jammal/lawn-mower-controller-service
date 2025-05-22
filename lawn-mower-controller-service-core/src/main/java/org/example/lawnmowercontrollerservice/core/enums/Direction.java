@@ -1,6 +1,7 @@
 package org.example.lawnmowercontrollerservice.core.enums;
 
 import lombok.Getter;
+import org.example.lawnmowercontrollerservice.ports.exceptions.WrongDirectionCharacterException;
 
 @Getter
 public enum Direction {
@@ -26,7 +27,7 @@ public enum Direction {
             case "E" -> E;
             case "S" -> S;
             case "W" -> W;
-            default -> throw new RuntimeException();
+            default -> throw new WrongDirectionCharacterException();
         };
     }
 
